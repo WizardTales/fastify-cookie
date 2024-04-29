@@ -8,7 +8,7 @@ const { Signer, sign, unsign } = require('./signer')
 const kReplySetCookies = Symbol('fastify.reply.setCookies')
 const kReplySetCookiesHookRan = Symbol('fastify.reply.setCookiesHookRan')
 
-function fastifyCookieSetCookie (reply, name, value, options) {
+async function fastifyCookieSetCookie (reply, name, value, options) {
   parseCookies(reply.server, reply.request, reply)
 
   const opts = Object.assign({}, options)
@@ -164,7 +164,7 @@ function plugin (fastify, options, next) {
     return signer.unsign(value)
   }
 
-  function setCookie (name, value, cookieOptions) {
+  async function setCookie (name, value, cookieOptions) {
     const opts = Object.assign({}, options.parseOptions, cookieOptions)
     return fastifyCookieSetCookie(this, name, value, opts)
   }
