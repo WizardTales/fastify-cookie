@@ -36,7 +36,7 @@ async function fastifyCookieSetCookie (reply, name, value, options) {
     setCookies(reply)
   }
 
-  return reply
+  return {}
 }
 
 function fastifyCookieClearCookie (reply, name, options) {
@@ -164,7 +164,7 @@ function plugin (fastify, options, next) {
     return signer.unsign(value)
   }
 
-  async function setCookie (name, value, cookieOptions) {
+  function setCookie (name, value, cookieOptions) {
     const opts = Object.assign({}, options.parseOptions, cookieOptions)
     return fastifyCookieSetCookie(this, name, value, opts)
   }
