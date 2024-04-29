@@ -17,8 +17,9 @@ async function fastifyCookieSetCookie (reply, name, value, options) {
     opts.expires = new Date(opts.expires)
   }
 
-  if (opts.signed) {
-    value = await reply.signCookie(value)
+  if (opts.signed || opts.encrypted) {
+    // if encrypted, we expect an actual payload
+    value = await reply.signCookie(opts.encrypted ? JSON.stringify(value) : value)
   }
 
   if (opts.secure === 'auto') {
@@ -132,6 +133,7 @@ function plugin (fastify, options, next) {
     fastify.decorateRequest('signCookie', signCookie)
     fastify.decorateRequest('unsignCookie', unsignCookie)
 
+    fastify.decorateReply('decryptCookie', decryptCookie)
     fastify.decorateReply('signCookie', signCookie)
     fastify.decorateReply('unsignCookie', unsignCookie)
   }
@@ -162,6 +164,11 @@ function plugin (fastify, options, next) {
 
   async function unsignCookie (value) {
     return signer.unsign(value)
+  }
+
+  // this assumes the cookie to carry a payload
+async function decryptCookie (value) {
+    return JSON.parse(await signer.unsign(value))
   }
 
   function setCookie (name, value, cookieOptions) {
