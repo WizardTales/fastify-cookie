@@ -18,7 +18,7 @@ function fastifyCookieSetCookie (reply, name, value, options) {
   }
 
   if (opts.signed) {
-    value = reply.signCookie(value)
+    value = await reply.signCookie(value)
   }
 
   if (opts.secure === 'auto') {
@@ -156,11 +156,11 @@ function plugin (fastify, options, next) {
     return cookie.parse(cookieHeader, options.parseOptions)
   }
 
-  function signCookie (value) {
+  async function signCookie (value) {
     return signer.sign(value)
   }
 
-  function unsignCookie (value) {
+  async function unsignCookie (value) {
     return signer.unsign(value)
   }
 
